@@ -1,0 +1,41 @@
+Bruno, Guilherme e Gabriel, Bom Dia
+
+Desculpe-me a demora em responder, mas preferi levar mais tempo para descrever em detalhes o funcionamento do ADF e também indicar quais os módulos que devem ser alterados para implementação dos algoritmos de clustering.
+
+Se vocês quiserem podemos marcar uma reunião nesse final de semana para eu explicar e demonstrar como/onde alterar o ADF para o nosso propósito.
+
+Primeiro, gostaria de explicar o funcionamento do ADF e como os diferentes módulos são acionados.
+
+Quando executamos o 'launch.sh' para execução do ADF, na realidade estamos chamando o método 'adf.Main' residente no pacote rcrs-adf-core e passando como parâmetro o Loader 'adf.sample.SampleLoader'. O adf.Main inicializa um objeto da classe AgentLauncher (adf.launcher.AgentLauncher).
+
+O 'adf.launcher.AgentLauncher' é responsável por
+  1. inicializar o System Registry de Entity, Message e Property,
+  2. ler os parâmetros de configuração do arquivo 'config/launch.cfg' ou interpretar os parâmetros passados na linha de comando, e
+  3. criar as instâncias dos Connectors(i.e., 'adf.launcher.connect.Connector's). Os conectores estendem os agentes que se conectam ao simulador e implementam métodos padronizados no ADF que farão a ponte entre o simulador e o os métodos implementados no ADF.
+
+NOTA: Para o time Poli, utilizaremos o arquivo 'config/launch.cfg' para definir o valor dos parâmetros a passar para o ADF ao invés de utilizarmos a linha de comando. Para tanto, criei um novo script para inicializar o time Poli, 'launch-poli.cfg' e verifique no repositório compartilhado a existência do arquivo 'config/launch.cfg'.
+
+Uma vez que todos os conectores foram instanciados, eles são executados, conectam-se ao simulador e tornam-se responsáveis por controlar um agente do simulador.
+
+A definição da associação entre a classe Java e o tipo de agente do simulador é feita porquem devenvolve o time de agentes por meio da classe que estende o AbstractLoader. No caso, do  Sample a classe é 'adf.sample.SampleLoader'. Na estructura do time Poli, essa classe é definida em 'poli.Loader'.
+
+Observe que no Loader são criadas instâncias das classes associadas com as táticas dos agentes. Essas táticas definem a sequência de ações que o agente daquele tipo vai executar. Na competição, a classe de táticas não pode ser alterada e para os nossos propósitos, nós também não precisaremos alterá-las. Mas é necessário compreendê-la para podermos personalizar as operações dos agentes.
+
+Por exemplo, o SampleTacticsAmbulanceCentre representa a tática do agente Ambulance Centre. Essa tática está associada ao Ambulance Centre conector, conforme mencionado acima, e a cada ciclo (timestep) da simulação o método think(...) definida nessa tática é acionado.
+
+O ADF esconde muitas das complexidades da conexão com o simulador, mas basicamente a cada ciclo da simulação
+  1. o simulador informa aos agentes quais entidades e propriedades do ambiente de simulação foram alterados, e as mensagens de comunicação que foram direcionadas para o agente
+  2. o agente recebe essas informações e altera seu conhecimento (i.e., as entidades e propriedades) sobre o ambiente simulado e também processa as mensagens de comunicaçao recebidas
+  3. o agente executa o método think(...), escolhe a ação que deseja realizar no ambente para o próximo ciclo, e gera as mensagens que deseja enviar para os outros agentes e centrais
+  4. o agente envia todas essas informações para o simulador
+
+O item (3) (i.e., o método think(...)) é a que temos compreender para personalizar as ações do agente. No caso do SampleTacticsAmbulanceCentre, ele aciona o método calc() da classe TargetAllocator e o método calc() do CommandPicker nessa ordem.
+
+O TargetAllocator é responsável por definir o target (i.e., civil a ser resgatada) para cada Ambulance Team. O CommandPicker é responsável por gerar a mensagem com a ação que será enviada a cada um dos Ambulance Team de acordo com o que foi definido pelo TargetAllocator.
+
+Como mencionado, o SampleTacticsAmbulanceCentre não deve ser alterado. Portanto, se personalizarmos o TargetAllocator e o CommandPicker, podemos alterar as estratégias de alocação de agentes. Para personalizar essa estratégia é necessário criar uma nova classe TargetAllocator e CommandPicker para o Ambulance Centre com essa estratégia e associar ao time. Essa associação é feita por meio do arquivo de configuração 'config/module.cfg' (default, ou o nome do arquivo que estiver definido no arquivo de configuração 'launch.cfg').
+
+Para o time Poli, o TargetAllocator e o CommandPicker associados ao Ambulance Centre são 'poli.module.complex.PoliAmbulanceTargetAllocator' e 'poli.centralized.CommandPickerAmbulance', e definidos no arquivo de configuração 'config/module_poli.cfg' nos rótulos TacticsAmbulanceCentre.TargetAllocator e TacticsAmbulanceCentre.CommandPicker.
+
+
+não podem ser alteradas pa 
