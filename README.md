@@ -1,18 +1,18 @@
-# `rcrs-adf-sample` RCRS Agent Development Framework (Sample)
+# `rcrs-adf-poli` RCRS Agent Development Framework (Poli)
 
-(Linux) Instructions to download, build and run the sample implementation using the Agent Development Framework (ADF)
+(Linux) Instructions to download, build and run the Poli implementation using the Agent Development Framework (ADF)
 
 ## 1. Software Pre-Requisites
 
 - Git
 - Gradle
-- OpenJDK Java 8+
+- OpenJDK Java 11+
 
 ## 2. Download
 
 ```bash
 
-$ git clone https://github.com/roborescue/rcrs-adf-sample.git
+$ git clone https://github.com/gnardin/rcrs-adf-poli.git
 ```
 
 ## 3. Compile
@@ -28,17 +28,13 @@ $ ./gradlew build
 
 The `rcrs-adf-sample` is a sample team implementation for the RCRS (`rcrs-server`) using the ADF core (`rcrs-adf-core`).
 
-To run the `rcrs-adf-sample`, first the `rcrs-server` must be running (Instructions of how to download, compile and run the `rcrs-server` are available at <https://github.com/roborescue/rcrs-server>).
+To run the `rcrs-adf-poli`, first the `rcrs-server` must be running (Instructions of how to download, compile and run the `rcrs-server` are available at <https://github.com/roborescue/rcrs-server>).
 
 After start the `rcrs-server`, open a new terminal window and execute
 
 ```bash
 
-$ cd rcrs-adf-sample
+$ cd rcrs-adf-poli
 
-$ ./launch.sh -all
+$ ./launch-poli.sh
 ```
-
-## 5. Support
-
-To report a bug, suggest improvements or request support, please open an issue at GitHub <https://github.com/roborescue/rcrs-adf-sample/issues>.
